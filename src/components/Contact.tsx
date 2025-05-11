@@ -27,16 +27,16 @@ export const Contact = () => {
 
     Promise.all([
       emailjs.send(
-        "service_ice67k3",
-        "template_zwxbvwr",
+        import.meta.env.VITE_SERVICE,
+        import.meta.env.VITE_TEMPLATE1,
         formData,
-        "cYLRUIdofe5vYGEjo"
+        import.meta.env.VITE_PUBLIC_KEY
       ),
       emailjs.send(
-        "service_ice67k3",
-        "template_iu59tff",
+        import.meta.env.VITE_SERVICE,
+        import.meta.env.VITE_TEMPLATE2,
         formData,
-        "cYLRUIdofe5vYGEjo"
+        import.meta.env.VITE_PUBLIC_KEY
       ),
     ])
       .then(() => {

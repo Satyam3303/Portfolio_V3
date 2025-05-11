@@ -1,4 +1,3 @@
-import React from "react";
 import { ChevronUp } from "lucide-react";
 import Kakashi from "../assets/Kakashi.jpg";
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const Skills = () => {
   const technicalSkills = [
     { name: 'Jayascript', percentage: 90 },

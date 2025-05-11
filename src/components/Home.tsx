@@ -1,4 +1,3 @@
-import React from 'react';
 import { Github as GitHub, Linkedin, Mail, ArrowDown } from 'lucide-react';
 
 export const Home = () => {
