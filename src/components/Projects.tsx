@@ -72,8 +72,8 @@ export const Projects = () => {
         "Twilio",
       ],
       github: "https://github.com/subhabratastl/STL_career_management_system",
-      disable: 0,
-      hover: "",
+      disable: 1,
+      hover: "This is a Private Project",
     },
     {
       title: "ESPN-Cricket-Comparision",
