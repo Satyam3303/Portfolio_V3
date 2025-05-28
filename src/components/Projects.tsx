@@ -6,10 +6,10 @@ export const Projects = () => {
 
   const projects = [
         {
-      title: "American Insurance Association",
+      title: "Private Company APplication Revamp",
       category: "web",
       image:
-        "",
+        "https://th.bing.com/th/id/OIP.KdMl7hu2xnsb_YSBtJnJaQHaD4?w=343&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
       description:
         "Project aimed at changing the Tech Stack of the Existing Application of Existing Application of Company from ASP dotnet to Newer Tech Stack Next.js and Nest.js",
       technologies: [
