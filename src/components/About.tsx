@@ -22,12 +22,12 @@ export const About = () => {
             <p className="text-gray-600 mb-6 leading-relaxed">
             I'm a passionate Full Stack Developer with hands-on experience 
             in building scalable and secure web applications using modern technologies. 
-            Currently working as a Software Engineer at Silicon Techlab, 
+            Currently working as a Software Engineer at Accenture, 
             I specialize in backend development with Nest.js, Node.js, and TypeScript, 
             focusing on modular architecture and performance optimization.
             </p>
             <p className="text-gray-600 mb-6 leading-relaxed">
-            I’ve contributed to real-world projects like revamping enterprise 
+            I’ve contributed to projects like revamping enterprise 
             applications with Next.js and Nest.js, and built feature-rich 
             applications including a real-time WhatsApp clone and a 
             Career Management System using the MERN stack, Socket.io, JWT, and cloud services like Twilio.
