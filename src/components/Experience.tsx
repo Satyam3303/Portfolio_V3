@@ -15,10 +15,12 @@ export const Experience = () => {
       ],
     },
     {
-      title: "Software Engineer",
+      title: "Associate Software Engineer",
       company: "Accenture",
-      duration: "Nov 2025 - Aug 2025",
-      description: ["Worked as a Software Enginner"],
+      duration: "Nov 2025 - Present",
+      description: [
+        "Joined as an associate software engineer at Accenture, contributing to various projects and gaining experience in software development lifecycle and best practices",
+      ],
     },
   ];
 
