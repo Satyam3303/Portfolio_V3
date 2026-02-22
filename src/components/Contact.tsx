@@ -1,22 +1,41 @@
-import React, { useState } from "react";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
-import emailjs from "emailjs-com";
+import React, { useState, useRef, useEffect } from 'react';
+import { Mail, Phone, MapPin, Send, Github, Linkedin, Instagram } from 'lucide-react';
+import emailjs from 'emailjs-com';
+
+const contactInfo = [
+  { icon: <Mail size={18} />,   label: 'Email',    value: 'shivamsatyam209@gmail.com', href: 'mailto:shivamsatyam209@gmail.com', color: '#14b8a6' },
+  { icon: <Phone size={18} />,  label: 'Phone',    value: '+91 8092769351',             href: 'tel:+918092769351',                color: '#3b82f6' },
+  { icon: <MapPin size={18} />, label: 'Location', value: 'India',                      href: null,                               color: '#f59e0b' },
+];
+
+const socials = [
+  { icon: <Instagram size={18} />, href: 'https://www.instagram.com/satyam_3303/',         label: 'Instagram' },
+  { icon: <Linkedin size={18} />,  href: 'https://www.linkedin.com/in/shivam-satyam3303/', label: 'LinkedIn'  },
+  { icon: <Github size={18} />,    href: 'https://github.com/Satyam3303',                  label: 'GitHub'    },
+];
 
 export const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const [submitError, setSubmitError] = useState('');
+  const sectionRef = useRef<HTMLElement>(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting)
+          entries[0].target.querySelectorAll('.reveal').forEach((el, i) =>
+            setTimeout(() => el.classList.add('visible'), i * 120)
+          );
+      },
+      { threshold: 0.1 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -24,218 +43,137 @@ export const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError('');
 
     Promise.all([
-      emailjs.send(
-        import.meta.env.VITE_SERVICE,
-        import.meta.env.VITE_TEMPLATE1,
-        formData,
-        import.meta.env.VITE_PUBLIC_KEY
-      ),
-      emailjs.send(
-        import.meta.env.VITE_SERVICE,
-        import.meta.env.VITE_TEMPLATE2,
-        formData,
-        import.meta.env.VITE_PUBLIC_KEY
-      ),
+      emailjs.send(import.meta.env.VITE_SERVICE, import.meta.env.VITE_TEMPLATE1, formData, import.meta.env.VITE_PUBLIC_KEY),
+      emailjs.send(import.meta.env.VITE_SERVICE, import.meta.env.VITE_TEMPLATE2, formData, import.meta.env.VITE_PUBLIC_KEY),
     ])
       .then(() => {
         setIsSubmitting(false);
         setSubmitSuccess(true);
-        setFormData({ name: "", email: "", subject: "", message: "" });
-        setTimeout(() => setSubmitSuccess(false), 5000);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setTimeout(() => setSubmitSuccess(false), 6000);
       })
-      .catch((error) => {
+      .catch((err) => {
         setIsSubmitting(false);
-        setSubmitError("Something went wrong. Please try again.");
-        console.error("EmailJS error:", error);
+        setSubmitError('Something went wrong. Please try again.');
+        console.error('EmailJS error:', err);
       });
   };
 
   return (
-    <section id="contact" className="py-24 bg-white">
-      <div className="container mx-auto px-4 md:px-6">
+    <section
+      id="contact"
+      ref={sectionRef}
+      className="relative py-28 overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, #0a0f1e 0%, #050810 100%)' }}
+    >
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.05] to-transparent" />
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-500/4 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            Get In Touch
+          <div className="reveal section-label mx-auto justify-center mb-4">Let's Connect</div>
+          <h2 className="reveal section-heading text-white mb-4">
+            Get In <span className="gradient-text">Touch</span>
           </h2>
-          <div className="w-20 h-1 bg-teal-500 rounded-full mx-auto"></div>
-          <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-            Have a project in mind or want to discuss opportunities? Feel free
-            to reach out!
+          <p className="reveal text-gray-400 max-w-xl mx-auto">
+            Have a project in mind or want to discuss opportunities? I'd love to hear from you.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
-          <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
-              Contact Information
-            </h3>
-            <div className="space-y-6">
-              <div className="flex items-start">
-                <div className="bg-teal-500 text-white p-3 rounded-lg">
-                  <Mail size={20} />
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          {/* Contact info */}
+          <div className="space-y-6">
+            {contactInfo.map((info) => (
+              <div
+                key={info.label}
+                className="reveal glass rounded-2xl p-5 border border-white/[0.06] flex items-center gap-4 hover:border-white/15 transition-all duration-300"
+                style={{ background: 'rgba(255,255,255,0.025)' }}
+              >
+                <div
+                  className="flex items-center justify-center w-11 h-11 rounded-xl shrink-0"
+                  style={{ background: `${info.color}15`, border: `1px solid ${info.color}30`, color: info.color }}
+                >
+                  {info.icon}
                 </div>
-                <div className="ml-4">
-                  <h4 className="text-gray-700 font-medium">Email</h4>
-                  <a
-                    href="mailto:shivamsatyam209@gmail.com"
-                    className="text-gray-600 hover:text-teal-500"
-                  >
-                    shivamsatyam209@gmail.com
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <div className="bg-teal-500 text-white p-3 rounded-lg">
-                  <Phone size={20} />
-                </div>
-                <div className="ml-4">
-                  <h4 className="text-gray-700 font-medium">Phone</h4>
-                  <a
-                    href="tel:+918092769351"
-                    className="text-gray-600 hover:text-teal-500"
-                  >
-                    +91 8092769351
-                  </a>
+                <div>
+                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-0.5">{info.label}</p>
+                  {info.href ? (
+                    <a href={info.href} className="text-gray-200 text-sm font-medium hover:text-teal-400 transition-colors">
+                      {info.value}
+                    </a>
+                  ) : (
+                    <p className="text-gray-200 text-sm font-medium">{info.value}</p>
+                  )}
                 </div>
               </div>
-              <div className="flex items-start">
-                <div className="bg-teal-500 text-white p-3 rounded-lg">
-                  <MapPin size={20} />
-                </div>
-                <div className="ml-4">
-                  <h4 className="text-gray-700 font-medium">Location</h4>
-                  <p className="text-gray-600">India</p>
-                </div>
+            ))}
+
+            {/* Socials */}
+            <div className="reveal">
+              <p className="text-gray-500 text-xs uppercase tracking-widest mb-4">Follow Me</p>
+              <div className="flex gap-3">
+                {socials.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.label}
+                    className="w-11 h-11 flex items-center justify-center rounded-xl glass border border-white/[0.07] text-gray-400 hover:text-teal-400 hover:border-teal-500/30 transition-all duration-300 hover:-translate-y-1"
+                  >
+                    {s.icon}
+                  </a>
+                ))}
               </div>
             </div>
 
-            <div className="mt-12">
-              <h3 className="text-xl font-semibold text-gray-800 mb-6">
-                Follow Me
-              </h3>
-              <div className="flex space-x-4">
-                <a
-                  href="https://www.instagram.com/satyam_3303/"
-                  className="bg-gray-100 hover:bg-teal-500 hover:text-white text-gray-700 p-3 rounded-full transition-colors"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z" />
-                  </svg>
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/shivam-satyam3303/"
-                  className="bg-gray-100 hover:bg-teal-500 hover:text-white text-gray-700 p-3 rounded-full transition-colors"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z" />
-                  </svg>
-                </a>
-                <a
-                  href="https://github.com/Satyam3303"
-                  className="bg-gray-100 hover:bg-teal-500 hover:text-white text-gray-700 p-3 rounded-full transition-colors"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-                  </svg>
-                </a>
+            {/* Open to work badge */}
+            <div className="reveal glass-teal rounded-2xl p-5 border border-teal-500/20">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-green-400 text-xs font-semibold uppercase tracking-wider">Open to Opportunities</span>
               </div>
+              <p className="text-gray-400 text-sm">
+                Currently open to full-time roles and exciting freelance projects. Let's create something great!
+              </p>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
-              Send Message
+          {/* Form */}
+          <div className="reveal glass rounded-2xl p-8 border border-white/[0.06]" style={{ background: 'rgba(255,255,255,0.025)' }}>
+            <h3 className="text-white font-bold text-xl mb-6" style={{ fontFamily: 'Syne, sans-serif' }}>
+              Send a Message
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-gray-700 mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-colors"
-                  placeholder="Your name"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="name" className="block text-gray-400 text-sm mb-2">Name</label>
+                  <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required className="form-input" placeholder="Your name" />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-gray-400 text-sm mb-2">Email</label>
+                  <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required className="form-input" placeholder="your@email.com" />
+                </div>
               </div>
               <div>
-                <label htmlFor="email" className="block text-gray-700 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-colors"
-                  placeholder="Your email"
-                />
+                <label htmlFor="subject" className="block text-gray-400 text-sm mb-2">Subject</label>
+                <input type="text" id="subject" name="subject" value={formData.subject} onChange={handleChange} required className="form-input" placeholder="What's this about?" />
               </div>
               <div>
-                <label htmlFor="subject" className="block text-gray-700 mb-2">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-colors"
-                  placeholder="Subject"
-                />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-gray-700 mb-2">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={5}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-colors resize-none"
-                  placeholder="Your message"
-                ></textarea>
+                <label htmlFor="message" className="block text-gray-400 text-sm mb-2">Message</label>
+                <textarea id="message" name="message" value={formData.message} onChange={handleChange} required rows={5} className="form-input resize-none" placeholder="Tell me about your project..." />
               </div>
 
               {submitSuccess && (
-                <div className="bg-green-100 text-green-700 px-4 py-3 rounded-lg">
-                  Message sent successfully! I'll get back to you soon.
+                <div className="flex items-center gap-3 bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-xl text-sm">
+                  ✓ Message sent! I'll get back to you soon.
                 </div>
               )}
-
               {submitError && (
-                <div className="bg-red-100 text-red-700 px-4 py-3 rounded-lg">
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm">
                   {submitError}
                 </div>
               )}
@@ -243,14 +181,16 @@ export const Contact = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex items-center justify-center bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-70"
+                className="btn-primary w-full justify-center py-3.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
-                  <span>Sending...</span>
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Sending...
+                  </>
                 ) : (
                   <>
-                    <Send size={18} className="mr-2" />
-                    <span>Send Message</span>
+                    <Send size={16} /> Send Message
                   </>
                 )}
               </button>
