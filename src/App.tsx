@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Header } from './components/Header';
 import { Home } from './components/Home';
 import { About } from './components/About';
@@ -9,23 +9,46 @@ import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 
 function App() {
-  const cursorRef = useRef<HTMLDivElement>(null);
+  const dotRef  = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const chRef   = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.left = `${e.clientX}px`;
-        cursorRef.current.style.top = `${e.clientY}px`;
-      }
+    let rx = 0, ry = 0;
+    const move = (e: MouseEvent) => {
+      const { clientX: x, clientY: y } = e;
+      setCoords({ x, y });
+      if (dotRef.current)  { dotRef.current.style.left  = x + 'px'; dotRef.current.style.top  = y + 'px'; }
+      if (chRef.current)   { chRef.current.style.left   = x + 'px'; chRef.current.style.top   = y + 'px'; }
+      // Ring lags slightly
+      const lag = () => {
+        rx += (x - rx) * 0.12;
+        ry += (y - ry) * 0.12;
+        if (ringRef.current) { ringRef.current.style.left = rx + 'px'; ringRef.current.style.top = ry + 'px'; }
+        if (Math.abs(x - rx) > 0.1 || Math.abs(y - ry) > 0.1) requestAnimationFrame(lag);
+      };
+      requestAnimationFrame(lag);
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', move);
+    return () => window.removeEventListener('mousemove', move);
   }, []);
 
   return (
-    <div className="min-h-screen relative" style={{ background: '#0a0f1e' }}>
-      {/* Ambient cursor glow */}
-      <div ref={cursorRef} className="cursor-glow" />
+    <div className="min-h-screen relative grid-bg" style={{ background: 'var(--bg)' }}>
+      {/* Scan line */}
+      <div className="scanline" />
+
+      {/* Custom cursor */}
+      <div ref={dotRef}  className="cursor cursor-dot"  style={{ position: 'fixed' }} />
+      <div ref={ringRef} className="cursor cursor-ring" style={{ position: 'fixed' }} />
+      <div ref={chRef}   className="cursor-crosshair"   style={{ position: 'fixed' }} />
+
+      {/* Live coord HUD */}
+      <div className="fixed bottom-4 right-4 z-50 hud text-right pointer-events-none">
+        <div>X: {coords.x.toString().padStart(4,'0')}</div>
+        <div>Y: {coords.y.toString().padStart(4,'0')}</div>
+      </div>
 
       <Header />
       <main>
